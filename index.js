@@ -67,7 +67,10 @@ export default {
   async fetch(request, env, ctx) {
     const accept = request.headers.get('Accept') || '';
     if (!accept.includes('text/markdown')) {
-      return fetch(request);
+      console.log('Request received!', request.url);
+      return new Response('Hello from worker!', { status: 200 });
+  },
+};
     }
 
     const response = await fetch(request);
