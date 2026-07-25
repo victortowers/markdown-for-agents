@@ -38,8 +38,44 @@ function estimateTokens(text) {
 
 export default {
   async fetch(request, env, ctx) {
-    console.log('Request received!', request.url);
+    const accept = request.headers.get('Accept') || '';
+    const url = new URL(request.url);
 
-    return new Response('Hello from worker!', { status: 200 });
+    // Browser request → serve a test HTML page
+    if (!accept.includes('text/markdown')) {
+      const html = `<!DOCTYPE html>
+<html>
+<head><title>Feito - Markdown for Agents Test</title></head>
+<body>
+  <h1>Hello from Feito!</h1>
+  <p>This is a <strong>test page</strong> for the Markdown for Agents worker.</p>
+  <p>Try curling with <code>Accept: text/markdown</code> to see the markdown version.</p>
+  <ul>
+    <li>Item one</li>
+    <li>Item two</li>
+    <li>Item three</li>
+  </ul>
+  <p>Visit <a href="https://example.com">Example</a> for more info.</p>
+</body>
+</html>`;
+      return new Response(html, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
+    }
+
+    // Agent request → fetch the HTML version of ourselves, then convert
+    const htmlUrl = url.toString();
+    const htmlResponse = await fetch(htmlUrl, {
+      headers: { 'Accept': 'text/html' },
+    });
+    const html = await htmlResponse.text();
+    const markdown = htmlToMarkdown(html);
+
+    return new Response(markdown, {
+      headers: {
+        'Content-Type': 'text/markdown; charset=utf-8',
+        'x-markdown-tokens': estimateTokens(markdown).toString(),
+      },
+    });
   },
 };
