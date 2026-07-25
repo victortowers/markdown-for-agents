@@ -69,7 +69,7 @@ export default {
     if (!accept.includes('text/markdown')) {
       console.log('Request received!', request.url);
       return new Response('Hello from worker!', { status: 200 });
-    }
+    },
 
     const response = await fetch(request);
     const html = await response.text();
