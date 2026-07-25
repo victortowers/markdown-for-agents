@@ -1,4 +1,15 @@
 function htmlToMarkdown(html) {
+  // Remove boilerplate sections completely
+  let md = html
+    .replace(/<nav[\s\S]*?<\/nav>/gi, '')
+    .replace(/<footer[\s\S]*?<\/footer>/gi, '')
+    .replace(/<header[\s\S]*?<\/header>/gi, '')
+    .replace(/<aside[\s\S]*?<\/aside>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, '')
+    .replace(/<svg[\s\S]*?<\/svg>/gi, '')
+    .replace(/<form[\s\S]*?<\/form>/gi, '')
     .replace(/<select[\s\S]*?<\/select>/gi, '')
     .replace(/<option[\s\S]*?<\/option>/gi, '')
     .replace(/<!--[\s\S]*?-->/g, '');
@@ -55,18 +66,6 @@ function htmlToMarkdown(html) {
   md = md.replace(/&#39;/g, "'");
   md = md.replace(/&nbsp;/g, ' ');
 
-  // Clean excess whitespace
-  md = md.replace(/[ \t]+/g, ' ');
-  md = md.replace(/\n[ \t]+/g, '\n');
-  md = md.replace(/\n{3,}/g, '\n\n');
-  md = md.replace(/^[ \t\n]+/, '');
-  md = md.replace(/[ \t\n]+$/, '');
-
-  return md.trim();
-}
-
-function estimateTokens(text) {
-  return Math.round(text.length / 4);
 }
 
 export default {
