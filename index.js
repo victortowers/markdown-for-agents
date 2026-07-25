@@ -66,6 +66,18 @@ function htmlToMarkdown(html) {
   md = md.replace(/&#39;/g, "'");
   md = md.replace(/&nbsp;/g, ' ');
 
+  // Clean excess whitespace
+  md = md.replace(/[ \t]+/g, ' ');
+  md = md.replace(/\n[ \t]+/g, '\n');
+  md = md.replace(/\n{3,}/g, '\n\n');
+  md = md.replace(/^[ \t\n]+/, '');
+  md = md.replace(/[ \t\n]+$/, '');
+
+  return md.trim();
+}
+
+function estimateTokens(text) {
+  return Math.round(text.length / 4);
 }
 
 export default {
